@@ -10,6 +10,8 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField]
     Camera cam;
 
+    public AudioSource stepsSource;
+
     private bool canMove = true;
     
     void Start()
@@ -28,6 +30,7 @@ public class PlayerMovement : MonoBehaviour
     void FixedUpdate()
     {
         Move();
+        Rotate();
     }
 
     private void UpdateMovementInput()
@@ -47,10 +50,32 @@ public class PlayerMovement : MonoBehaviour
         rb.MovePosition(rb.position + (_movement * (Time.fixedDeltaTime * movementSpeed)));
         
         cam.transform.position = new Vector3(transform.position.x, transform.position.y, cam.transform.position.z);
+        if (_movement != Vector2.zero)
+        {
+            if(!stepsSource.isPlaying)
+                stepsSource.Play();
+        }
+        else
+        {
+            stepsSource.Stop();
+        }
+    }
+
+    private void Rotate()
+    {
+        if (!canMove)
+        {
+            return;
+        }
+        
+        var direction = (Vector2)cam.ScreenToWorldPoint(Input.mousePosition) - (Vector2)transform.position;
+        float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
+        transform.rotation = Quaternion.Euler(0, 0, angle);
     }
 
     private void StopMovement()
     {
         canMove = false;
+        rb.constraints = RigidbodyConstraints2D.FreezePosition;
     }
 }

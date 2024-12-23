@@ -5,14 +5,12 @@ using UnityEngine;
 public class Projectile : MonoBehaviour
 {
     [SerializeField] private ProjectileData projectileData;
-    [SerializeField] private SpriteRenderer spriteRenderer;
     [SerializeField] private Animation myAnimation;
     private bool _isSetup = false;
     private int deathTime;
 
     private void Awake()
     {
-        spriteRenderer.sprite = projectileData.sprite;
         myAnimation.clip = projectileData.AnimationClip;
         if (myAnimation.clip != null)
         {
